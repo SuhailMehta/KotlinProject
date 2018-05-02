@@ -21,9 +21,6 @@ import dagger.android.DispatchingAndroidInjector
 class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
     @Inject
-    lateinit var picasso : Picasso
-
-    @Inject
     lateinit var fragmentDispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
 
     override fun supportFragmentInjector(): AndroidInjector<Fragment> = fragmentDispatchingAndroidInjector
@@ -34,8 +31,6 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-
-//        picasso.load("http://i.imgur.com/DvpvklR.png").into(image)
 
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)

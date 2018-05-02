@@ -7,7 +7,7 @@ import com.tala.assignment.data.network.model.DataWrapper
 import com.tala.assignment.repository.VenueRepository
 
 
-open class VenueListViewModel: ViewModel() {
+class VenueListViewModel: ViewModel() {
 
     private lateinit var mObservableVenueList: LiveData<DataWrapper<VenueListViewModel>>
 
