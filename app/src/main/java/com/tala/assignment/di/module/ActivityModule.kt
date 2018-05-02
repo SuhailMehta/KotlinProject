@@ -1,9 +1,9 @@
-package com.tala.assignment.dagger.module
+package com.tala.assignment.di.module
 
 import dagger.Provides
 import android.app.Activity
 import android.content.Context
-import com.tala.assignment.dagger.interfaces.TalaApplicationScope
+import com.tala.assignment.di.interfaces.TalaApplicationScope
 import dagger.Module
 import javax.inject.Named
 

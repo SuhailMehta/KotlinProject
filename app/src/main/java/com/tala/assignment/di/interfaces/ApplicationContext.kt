@@ -1,4 +1,4 @@
-package com.tala.assignment.dagger.interfaces
+package com.tala.assignment.di.interfaces
 
 import javax.inject.Qualifier
 

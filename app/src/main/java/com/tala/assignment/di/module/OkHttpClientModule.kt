@@ -1,14 +1,14 @@
-package com.tala.assignment.dagger.module
+package com.tala.assignment.di.module
 
 import android.content.Context
 import android.util.Log
-import com.tala.assignment.dagger.interfaces.ApplicationContext
+import com.tala.assignment.di.interfaces.ApplicationContext
 import dagger.Module
 import dagger.Provides
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import com.tala.assignment.dagger.interfaces.TalaApplicationScope
+import com.tala.assignment.di.interfaces.TalaApplicationScope
 import java.io.File
 
 

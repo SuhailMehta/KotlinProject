@@ -1,9 +1,10 @@
-package com.tala.assignment.dagger.module
+package com.tala.assignment.di.module
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.tala.assignment.dagger.interfaces.ApplicationContext
+import com.tala.assignment.di.interfaces.ApplicationContext
 import com.tala.assignment.data.network.TalaNetworkService
+import com.tala.assignment.utils.Constants
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -19,7 +20,7 @@ open class RetrofitModule {
     @Provides
     fun retrofit(@ApplicationContext okHttpClient: OkHttpClient, gsonConverterFactory: GsonConverterFactory): Retrofit = Retrofit.Builder()
             .client(okHttpClient)
-            .baseUrl("")
+            .baseUrl(Constants.baseUrl())
             .addConverterFactory(gsonConverterFactory)
             .build()
 
