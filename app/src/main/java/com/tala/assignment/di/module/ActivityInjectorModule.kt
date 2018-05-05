@@ -6,6 +6,10 @@ import com.tala.assignment.ui.main.MainActivity
 import com.tala.assignment.ui.main.MainActivityFragment
 import com.tala.assignment.di.component.MainActivityFragmentSubComponent
 import com.tala.assignment.di.component.MainActivitySubComponent
+import com.tala.assignment.di.component.VenueActivityFragmentSubComponent
+import com.tala.assignment.di.component.VenueActivitySubComponent
+import com.tala.assignment.ui.main.VenueListActivity
+import com.tala.assignment.ui.main.VenueListFragment
 import dagger.android.AndroidInjector
 import dagger.multibindings.IntoMap
 import dagger.Binds
@@ -28,4 +32,20 @@ abstract class MainActivityFragmentModule {
     @IntoMap
     @FragmentKey(MainActivityFragment::class)
     internal abstract fun bindMainActivityFragmentInjectorFactory(builder: MainActivityFragmentSubComponent.Builder): AndroidInjector.Factory<out Fragment>
+}
+
+@Module(subcomponents = arrayOf(VenueActivitySubComponent::class))
+abstract class VenueListActivityModule {
+    @Binds
+    @IntoMap
+    @ActivityKey(VenueListActivity::class)
+    internal abstract fun bindVenueListActivityInjectorFactory(builder: VenueActivitySubComponent.Builder): AndroidInjector.Factory<out Activity>
+}
+
+@Module(subcomponents = arrayOf(VenueActivityFragmentSubComponent::class))
+abstract class VenueListFragmentModule {
+    @Binds
+    @IntoMap
+    @FragmentKey(VenueListFragment::class)
+    internal abstract fun bindVenueListFragmentInjectorFactory(builder: VenueActivityFragmentSubComponent.Builder): AndroidInjector.Factory<out Fragment>
 }

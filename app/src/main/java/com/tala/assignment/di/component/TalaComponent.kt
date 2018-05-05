@@ -8,12 +8,17 @@ import com.tala.assignment.TalaApplication
 import com.tala.assignment.di.interfaces.TalaApplicationScope
 import com.tala.assignment.di.module.*
 import com.tala.assignment.data.network.TalaNetworkService
+import com.tala.assignment.ui.main.VenueListActivity
+import com.tala.assignment.ui.main.VenueListFragment
 import dagger.Component
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
 
 @TalaApplicationScope
-@Component(modules = arrayOf(RetrofitModule::class, PicassoModule::class, LocationModule::class, MainActivityModule::class, MainActivityFragmentModule::class))
+@Component(modules = arrayOf(RetrofitModule::class,
+        PicassoModule::class, LocationModule::class,
+        MainActivityModule::class, MainActivityFragmentModule::class,
+        VenueListActivityModule::class, VenueListFragmentModule::class))
 interface TalaComponent {
 
     fun getTalaNetworkService(): TalaNetworkService
@@ -36,4 +41,16 @@ interface MainActivitySubComponent: AndroidInjector<MainActivity> {
 interface MainActivityFragmentSubComponent: AndroidInjector<MainActivityFragment> {
     @Subcomponent.Builder
     abstract class Builder: AndroidInjector.Builder<MainActivityFragment>()
+}
+
+@Subcomponent
+interface VenueActivitySubComponent: AndroidInjector<VenueListActivity> {
+    @Subcomponent.Builder
+    abstract class Builder: AndroidInjector.Builder<VenueListActivity>()
+}
+
+@Subcomponent
+interface VenueActivityFragmentSubComponent: AndroidInjector<VenueListFragment> {
+    @Subcomponent.Builder
+    abstract class Builder: AndroidInjector.Builder<VenueListFragment>()
 }

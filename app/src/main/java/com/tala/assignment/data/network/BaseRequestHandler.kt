@@ -14,18 +14,18 @@ abstract class BaseRequestHandler<R> {
         val dataWrapper = DataWrapper<R>(null,null)
         makeRequest().enqueue(object : ApiCallback<R>() {
             override fun handleResponseData(data: R?) {
-                dataWrapper.copy(consdata = data)
-                liveData.value = dataWrapper
+                val tempData = dataWrapper.copy(consdata = data)
+                liveData.value = tempData
             }
 
             override  fun handleError(response: Response<R>?) {
-                dataWrapper.copy(apiExceptions = ApiErrorHandler<R>().getErrorData(response))
-                liveData.value = dataWrapper
+                val tempData = dataWrapper.copy(apiExceptions = ApiErrorHandler<R>().getErrorData(response))
+                liveData.value = tempData
             }
 
             override fun handleException(t: Exception) {
-                dataWrapper.copy(apiExceptions = t)
-                liveData.value = dataWrapper
+                val tempData = dataWrapper.copy(apiExceptions = t)
+                liveData.value = tempData
             }
         })
         return liveData

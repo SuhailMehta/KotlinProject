@@ -26,7 +26,12 @@ import javax.inject.Inject
 /**
  * A placeholder fragment containing a list of venues in grid layout.
  */
-class MainActivityFragment : Fragment() {
+class VenueListFragment : Fragment() {
+
+    companion object {
+        fun title() = "TITLE"
+        fun id() = "ID"
+    }
 
     @Inject
     lateinit var talaNetworkService: TalaNetworkService
@@ -42,11 +47,6 @@ class MainActivityFragment : Fragment() {
 
         super.onAttach(context)
 
-        if(context is IActivityCommunication){
-            context.setTitle("Categories")
-        }else{
-            throw ClassCastException(activity.toString()+" must implement IActivityCommunication")
-        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -58,6 +58,18 @@ class MainActivityFragment : Fragment() {
 
     override fun onActivityCreated(@Nullable savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        val args: Bundle? = arguments
+        val title: String? = args?.getString(title())
+        val id: String? = args?.getString(id())
+
+        if (context is IActivityCommunication) {
+            if (title != null) {
+                (context as IActivityCommunication).setTitle(title)
+            }
+        } else {
+            throw ClassCastException(activity.toString() + " must implement IActivityCommunication")
+        }
 
         val viewModel = ViewModelProviders.of(this).get(VenueListViewModel()::class.java)
 
@@ -82,7 +94,7 @@ class MainActivityFragment : Fragment() {
                     venueListAdapter = VenueListAdapter(
                             venueListModel.response.venues,
                             picasso,
-                            object: VenueListAdapter.OnItemClickListener{
+                            object : VenueListAdapter.OnItemClickListener {
                                 override fun onItemClick(item: VenueListModel.VenueRow) {
 
                                     (context as IActivityCommunication).onClick(item)

@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
 
-class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, IActivityCommunication {
+class VenueListActivity : AppCompatActivity(), HasSupportFragmentInjector, IActivityCommunication {
 
     @Inject
     lateinit var fragmentDispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
@@ -26,11 +26,22 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, IActivityC
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
+
         setSupportActionBar(toolbar)
 
-        val fragment = MainActivityFragment()
+        val title: String? = intent.getStringExtra(VenueListFragment.title())
+        val id: String? = intent.getStringExtra(VenueListFragment.id())
+
+        val fragment = VenueListFragment()
 
         if (savedInstanceState == null) {
+
+            val args = Bundle()
+
+            args.putString(VenueListFragment.title(), title)
+            args.putString(VenueListFragment.id(), id)
+            fragment.arguments = args
+
             supportFragmentManager.beginTransaction().add(R.id.container, fragment).commit()
         }
     }
@@ -40,14 +51,5 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, IActivityC
     }
 
     override fun onClick(data: VenueListModel.VenueRow) {
-        val intent = Intent(this, VenueListActivity::class.java)
-        intent.putExtra(VenueListFragment.title(), data.name)
-        intent.putExtra(VenueListFragment.id(), data.id)
-        startActivity(intent)
     }
-}
-
-interface IActivityCommunication {
-    fun setTitle(title: String)
-    fun onClick(data: VenueListModel.VenueRow)
 }

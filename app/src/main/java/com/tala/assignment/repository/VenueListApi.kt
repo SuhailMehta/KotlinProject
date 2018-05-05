@@ -4,19 +4,20 @@ import android.arch.lifecycle.LiveData
 import com.tala.assignment.data.network.BaseRequestHandler
 import com.tala.assignment.data.network.TalaNetworkService
 import com.tala.assignment.data.network.model.DataWrapper
+import com.tala.assignment.data.network.model.VenueListModel
 import com.tala.assignment.utils.Constants
 import com.tala.assignment.viewmodel.VenueListViewModel
 import retrofit2.Call
 import javax.inject.Inject
 
-class VenueListApi(val latlong : String, val talaNetworkService: TalaNetworkService): BaseRequestHandler<VenueListViewModel>() {
+class VenueListApi(val latlong : String, val talaNetworkService: TalaNetworkService): BaseRequestHandler<VenueListModel.Response>() {
 
-    override fun makeRequest(): Call<VenueListViewModel> {
+    override fun makeRequest(): Call<VenueListModel.Response> {
         return talaNetworkService.getVenueDetails(latlong,
                 Constants.version(),
                 Constants.clientId(),
                 Constants.clientSecret())
     }
 
-    fun getVenues() : LiveData<DataWrapper<VenueListViewModel>> = doRequest()
+    fun getVenues() : LiveData<DataWrapper<VenueListModel.Response>> = doRequest()
 }
