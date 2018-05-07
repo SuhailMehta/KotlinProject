@@ -10,6 +10,7 @@ interface TalaNetworkService {
 
     @GET("venues/search")
     fun getVenueDetails(@Query("ll") ll: String,
+                        @Query("categoryId") categoryId: String,
                         @Query("v") version: String,
                         @Query("client_id") client_id: String,
                         @Query("client_secret") client_secret: String): Call<VenueListModel.Response>

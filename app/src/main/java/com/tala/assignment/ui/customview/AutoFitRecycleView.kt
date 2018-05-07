@@ -38,8 +38,14 @@ class AutoFitRecycleView: RecyclerView{
         super.onMeasure(widthSpec, heightSpec)
         if (columnWidth > 0) {
             val spanCount = Math.max(1, measuredWidth / columnWidth)
-            mLayoutManager.setSpanCount(spanCount)
+            mLayoutManager.spanCount = spanCount
+        }else{
+            mLayoutManager.spanCount = 1
         }
+    }
+
+    fun setColumnWidth(width: Int){
+        columnWidth = width
     }
 
 }

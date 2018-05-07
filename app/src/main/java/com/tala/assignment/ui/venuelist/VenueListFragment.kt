@@ -17,8 +17,10 @@ import com.tala.assignment.data.network.model.DataWrapper
 import com.tala.assignment.data.network.model.VenueListModel
 import com.tala.assignment.repository.VenueRepository
 import com.tala.assignment.ui.adapter.VenueListAdapter
+import com.tala.assignment.ui.customview.AutoFitRecycleView
 import com.tala.assignment.ui.main.IActivityCommunication
 import com.tala.assignment.viewmodel.CategoryListViewModel
+import com.tala.assignment.viewmodel.VenueListViewModel
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_main.*
 import javax.inject.Inject
@@ -40,8 +42,9 @@ class VenueListFragment : Fragment() {
     @Inject
     lateinit var picasso: Picasso
 
-    private lateinit var autoFitRecycleView: RecyclerView
-    private var venueListAdapter: VenueListAdapter? = null
+    private lateinit var autoFitRecycleView: AutoFitRecycleView
+    private var venueListAdapter: VenueListAdapter<VenueListModel.VenueRow>? = null
+    private val venues: ArrayList<VenueListModel.VenueRow> = ArrayList()
 
     override fun onAttach(context: Context?) {
         AndroidSupportInjection.inject(this)
@@ -72,9 +75,9 @@ class VenueListFragment : Fragment() {
             throw ClassCastException(activity.toString() + " must implement IActivityCommunication")
         }
 
-        val viewModel = ViewModelProviders.of(this).get(CategoryListViewModel()::class.java)
+        val viewModel = ViewModelProviders.of(this).get(VenueListViewModel()::class.java)
 
-        subscribeUi(viewModel)
+        subscribeUi(viewModel, id!!)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -83,34 +86,43 @@ class VenueListFragment : Fragment() {
         autoFitRecycleView = auto_fit_recycle_view
 
         autoFitRecycleView.setHasFixedSize(true)
+
+        venueListAdapter = VenueListAdapter(
+                venues,
+                picasso,
+                object : VenueListAdapter.OnItemClickListener {
+                    override fun onItemClick(item: VenueListModel.VenueRow) {
+                        (context as IActivityCommunication).onClick(item)
+                    }
+                }
+        )
+        autoFitRecycleView.adapter = venueListAdapter
     }
 
-    private fun subscribeUi(viewModel: CategoryListViewModel) {
-        viewModel.getVenues(VenueRepository.instance, talaNetworkService)!!.observe(this, Observer<DataWrapper<VenueListModel.Response>> {
-            if (null != it?.data) {
+    private fun subscribeUi(viewModel: VenueListViewModel, id: String) {
+        viewModel.getVenues(id, VenueRepository.instance, talaNetworkService)!!.observe(this, Observer<DataWrapper<VenueListModel.Response>> {
+            when {
+                null != it?.data -> {
 
-                val venueListModel: VenueListModel.Response = it?.data
+                    autoFitRecycleView.setColumnWidth(context?.resources?.getDimension(R.dimen.column_width)!!.toInt())
 
-                if (null == venueListAdapter) {
-                    venueListAdapter = VenueListAdapter(
-                            venueListModel.response.venues,
-                            picasso,
-                            object : VenueListAdapter.OnItemClickListener {
-                                override fun onItemClick(item: VenueListModel.VenueRow) {
+                    val venueListModel: VenueListModel.Response = it.data
 
-                                    (context as IActivityCommunication).onClick(item)
+                    // Not handling load more case
+                    venueListAdapter?.setData(venueListModel.response.venues)
+                    venueListAdapter?.setProgress(false)
+                    venueListAdapter?.notifyDataSetChanged()
 
-                                }
-                            }
-                    )
-                    autoFitRecycleView.adapter = venueListAdapter
-                } else {
-                    // Add public setVenues method to update the list
-                    autoFitRecycleView.adapter.notifyDataSetChanged()
                 }
-
-            } else {
-                // Handle Exception/ Network Error
+                it?.progress!! -> {
+                    venueListAdapter?.setProgress(it.progress)
+                    venueListAdapter?.notifyDataSetChanged()
+                }
+                else -> {
+                    // Handle Exception/ Network Error
+                    venueListAdapter?.setProgress(false)
+                    venueListAdapter?.notifyDataSetChanged()
+                }
             }
         })
     }

@@ -5,23 +5,84 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import com.squareup.picasso.Picasso
 import com.tala.assignment.R
+import com.tala.assignment.data.network.model.CategoryModel
 import com.tala.assignment.data.network.model.VenueListModel
 
-class VenueListAdapter(private val venues: List<VenueListModel.VenueRow>,
-                       private val picasso: Picasso, private val listener: OnItemClickListener) : RecyclerView.Adapter<VenueListAdapter.ViewHolder>() {
+class VenueListAdapter<T>(private var venues: List<T>,
+                          private val picasso: Picasso, private val listener: OnItemClickListener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    private var progress: Boolean = false
 
-        val data = venues[position]
+    companion object {
+        private const val PROGRESS_TYPE: Int = 1001
+        private const val DATA_TYPE: Int = 1002
+        private const val IMAGE_DIMENTIONS: Int = 88 // Four square Api specific
+    }
 
-        holder.bind(data)
+    fun setData(venues: List<T>) {
+        this.venues = venues
+    }
+
+    fun setProgress(progress: Boolean) {
+        this.progress = progress
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+
+        if (holder is VenueListAdapter.ViewHolder) {
+
+            val data = venues[position]
+            if (data is VenueListModel.VenueRow) {
+
+                if (data.categories!!.size > 0) {
+                    val imageUrlBase = data.categories[0].icon
+                    val imageUrl = "${imageUrlBase.prefix}$IMAGE_DIMENTIONS${imageUrlBase.suffix}"
+                    picasso.load(imageUrl).into(holder.logo)
+                } else {
+                    picasso.load(R.drawable.placeholder).fit().into(holder.logo)
+                }
+                holder.name.text = data.name
+
+                holder.parent.setOnClickListener {
+                    listener.onItemClick(data)
+                }
+            } else if (data is CategoryModel.Category) {
+
+                val imageUrlBase = data.icon
+                if (imageUrlBase != null) {
+                    val imageUrl = "${imageUrlBase.prefix}$IMAGE_DIMENTIONS${imageUrlBase.suffix}"
+                    picasso.load(imageUrl).into(holder.logo)
+                } else {
+                    picasso.load(R.drawable.placeholder).fit().into(holder.logo)
+                }
+                holder.name.text = data.name
+
+                holder.parent.setOnClickListener {
+                    val row: VenueListModel.VenueRow = VenueListModel.VenueRow(name = data.name,
+                            id = data.id, contact = null, location = null, categories = null)
+                    listener.onItemClick(row)
+                }
+            }
+
+        } else if (holder is VenueListAdapter<*>.ViewHolderProgressBar) {
+
+            holder.bind(progress)
+
+        }
 
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+
+        if (viewType == PROGRESS_TYPE) {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.progress, parent, false)
+
+            return ViewHolderProgressBar(view)
+        }
 
         val view = LayoutInflater.from(parent.context).inflate(R.layout.venue_list_row, parent, false)
 
@@ -29,13 +90,26 @@ class VenueListAdapter(private val venues: List<VenueListModel.VenueRow>,
 
     }
 
-    override fun getItemCount(): Int = venues.size
+    override fun getItemViewType(position: Int): Int {
+        if (progress) {
+            return PROGRESS_TYPE
+        }
 
-    inner class ViewHolder : RecyclerView.ViewHolder {
+        return DATA_TYPE
+    }
 
-        private val logo: ImageView
-        private val name: TextView
-        private val parent: View
+    override fun getItemCount(): Int {
+        if (progress) {
+            return 1
+        }
+        return venues.size
+    }
+
+    class ViewHolder : RecyclerView.ViewHolder {
+
+        val logo: ImageView
+        val name: TextView
+        val parent: View
 
         constructor(itemView: View) : super(itemView) {
 
@@ -45,20 +119,25 @@ class VenueListAdapter(private val venues: List<VenueListModel.VenueRow>,
 
         }
 
-        fun bind(data : VenueListModel.VenueRow){
-            var imageUrl = ""
+    }
 
-            if (data.categories.size > 0) {
-                val imageUrlBase = data.categories[0].icon
-                imageUrl = "${imageUrlBase.prefix}88${imageUrlBase.suffix}"
-                picasso.load(imageUrl).into(logo)
-            }
+    inner class ViewHolderProgressBar : RecyclerView.ViewHolder {
 
-            name.text = data.name
+        private val progressBar: ProgressBar
 
-            parent.setOnClickListener {
-                listener.onItemClick(data)
-            }
+        constructor(itemView: View) : super(itemView) {
+
+            progressBar = itemView.findViewById(R.id.progressBar) as ProgressBar
+
+        }
+
+        fun bind(progress: Boolean) {
+
+            if (progress)
+                progressBar.visibility = View.VISIBLE
+            else
+                progressBar.visibility = View.GONE
+
         }
 
     }

@@ -6,6 +6,7 @@ import android.content.Context
 import android.os.Bundle
 import android.support.annotation.Nullable
 import android.support.v4.app.Fragment
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -13,10 +14,13 @@ import android.view.ViewGroup
 import com.squareup.picasso.Picasso
 import com.tala.assignment.R
 import com.tala.assignment.data.network.TalaNetworkService
+import com.tala.assignment.data.network.model.CategoryModel
 import com.tala.assignment.data.network.model.DataWrapper
 import com.tala.assignment.data.network.model.VenueListModel
+import com.tala.assignment.repository.CategoryRepository
 import com.tala.assignment.repository.VenueRepository
 import com.tala.assignment.ui.adapter.VenueListAdapter
+import com.tala.assignment.ui.customview.AutoFitRecycleView
 import com.tala.assignment.viewmodel.CategoryListViewModel
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_main.*
@@ -34,18 +38,20 @@ class CategoryListFragment : Fragment() {
     @Inject
     lateinit var picasso: Picasso
 
-    private lateinit var autoFitRecycleView: RecyclerView
-    private var venueListAdapter: VenueListAdapter? = null
+    private lateinit var autoFitRecycleView: AutoFitRecycleView
+    private var venueListAdapter: VenueListAdapter<CategoryModel.Category>? = null
+
+    private val venues: ArrayList<CategoryModel.Category> = ArrayList()
 
     override fun onAttach(context: Context?) {
         AndroidSupportInjection.inject(this)
 
         super.onAttach(context)
 
-        if(context is IActivityCommunication){
+        if (context is IActivityCommunication) {
             context.setTitle("Categories")
-        }else{
-            throw ClassCastException(activity.toString()+" must implement IActivityCommunication")
+        } else {
+            throw ClassCastException(activity.toString() + " must implement IActivityCommunication")
         }
     }
 
@@ -62,6 +68,7 @@ class CategoryListFragment : Fragment() {
         val viewModel = ViewModelProviders.of(this).get(CategoryListViewModel()::class.java)
 
         subscribeUi(viewModel)
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -70,34 +77,44 @@ class CategoryListFragment : Fragment() {
         autoFitRecycleView = auto_fit_recycle_view
 
         autoFitRecycleView.setHasFixedSize(true)
+
+        venueListAdapter = VenueListAdapter(
+                venues,
+                picasso,
+                object : VenueListAdapter.OnItemClickListener {
+                    override fun onItemClick(item: VenueListModel.VenueRow) {
+                        (context as IActivityCommunication).onClick(item)
+                    }
+                }
+        )
+        autoFitRecycleView.adapter = venueListAdapter
+
     }
 
     private fun subscribeUi(viewModel: CategoryListViewModel) {
-        viewModel.getVenues(VenueRepository.instance, talaNetworkService)!!.observe(this, Observer<DataWrapper<VenueListModel.Response>> {
-            if (null != it?.data) {
+        viewModel.getCategories(CategoryRepository.instance, talaNetworkService)!!.observe(this, Observer<DataWrapper<CategoryModel.Response>> {
+            when {
+                null != it?.data -> {
 
-                val venueListModel: VenueListModel.Response = it?.data
+                    autoFitRecycleView.setColumnWidth(context?.resources?.getDimension(R.dimen.column_width)!!.toInt())
 
-                if (null == venueListAdapter) {
-                    venueListAdapter = VenueListAdapter(
-                            venueListModel.response.venues,
-                            picasso,
-                            object: VenueListAdapter.OnItemClickListener{
-                                override fun onItemClick(item: VenueListModel.VenueRow) {
+                    val categoryListModel: CategoryModel.Response = it.data
 
-                                    (context as IActivityCommunication).onClick(item)
+                    // Not handling load more case
+                    venueListAdapter?.setData(categoryListModel.response.categories)
+                    venueListAdapter?.setProgress(false)
+                    venueListAdapter?.notifyDataSetChanged()
 
-                                }
-                            }
-                    )
-                    autoFitRecycleView.adapter = venueListAdapter
-                } else {
-                    // Add public setVenues method to update the list
-                    autoFitRecycleView.adapter.notifyDataSetChanged()
                 }
-
-            } else {
-                // Handle Exception/ Network Error
+                it?.progress!! -> {
+                    venueListAdapter?.setProgress(it.progress)
+                    venueListAdapter?.notifyDataSetChanged()
+                }
+                else -> {
+                    // Handle Exception/ Network Error
+                    venueListAdapter?.setProgress(false)
+                    venueListAdapter?.notifyDataSetChanged()
+                }
             }
         })
     }

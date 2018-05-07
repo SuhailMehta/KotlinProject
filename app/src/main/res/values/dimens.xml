@@ -5,4 +5,5 @@
     <dimen name="item_margin">8dp</dimen>
     <dimen name="column_width">150dp</dimen>
     <dimen name="spacing">10px</dimen>
+    <dimen name="top_marigin_recycle_view">48dp</dimen>
 </resources>

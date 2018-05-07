@@ -12,6 +12,9 @@ import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
+import com.tala.assignment.R.id.toolbar
+
+
 
 
 class VenueListActivity : AppCompatActivity(), HasSupportFragmentInjector, IActivityCommunication {
@@ -28,6 +31,8 @@ class VenueListActivity : AppCompatActivity(), HasSupportFragmentInjector, IActi
         setContentView(R.layout.activity_main)
 
         setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        toolbar.setNavigationOnClickListener { onBackPressed() }
 
         val title: String? = intent.getStringExtra(VenueListFragment.title())
         val id: String? = intent.getStringExtra(VenueListFragment.id())
