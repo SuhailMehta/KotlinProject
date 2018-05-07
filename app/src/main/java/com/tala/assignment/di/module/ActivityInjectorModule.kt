@@ -3,13 +3,13 @@ package com.tala.assignment.di.module
 import android.app.Activity
 import android.support.v4.app.Fragment
 import com.tala.assignment.ui.main.MainActivity
-import com.tala.assignment.ui.main.MainActivityFragment
+import com.tala.assignment.ui.main.CategoryListFragment
 import com.tala.assignment.di.component.MainActivityFragmentSubComponent
 import com.tala.assignment.di.component.MainActivitySubComponent
 import com.tala.assignment.di.component.VenueActivityFragmentSubComponent
 import com.tala.assignment.di.component.VenueActivitySubComponent
-import com.tala.assignment.ui.main.VenueListActivity
-import com.tala.assignment.ui.main.VenueListFragment
+import com.tala.assignment.ui.venuelist.VenueListActivity
+import com.tala.assignment.ui.venuelist.VenueListFragment
 import dagger.android.AndroidInjector
 import dagger.multibindings.IntoMap
 import dagger.Binds
@@ -30,7 +30,7 @@ abstract class MainActivityModule {
 abstract class MainActivityFragmentModule {
     @Binds
     @IntoMap
-    @FragmentKey(MainActivityFragment::class)
+    @FragmentKey(CategoryListFragment::class)
     internal abstract fun bindMainActivityFragmentInjectorFactory(builder: MainActivityFragmentSubComponent.Builder): AndroidInjector.Factory<out Fragment>
 }
 

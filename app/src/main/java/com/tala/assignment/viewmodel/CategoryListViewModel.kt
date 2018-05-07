@@ -8,7 +8,7 @@ import com.tala.assignment.data.network.model.VenueListModel
 import com.tala.assignment.repository.VenueRepository
 
 
-class VenueListViewModel : ViewModel() {
+class CategoryListViewModel : ViewModel() {
 
     private var mObservableVenueList : LiveData<DataWrapper<VenueListModel.Response>>? = null
 

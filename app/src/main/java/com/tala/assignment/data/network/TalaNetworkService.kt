@@ -2,7 +2,6 @@ package com.tala.assignment.data.network
 
 import com.tala.assignment.data.network.model.CategoryModel
 import com.tala.assignment.data.network.model.VenueListModel
-import com.tala.assignment.viewmodel.VenueListViewModel
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query

@@ -2,7 +2,7 @@ package com.tala.assignment.repository
 
 import javax.inject.Singleton
 import android.arch.lifecycle.MediatorLiveData
-import com.tala.assignment.viewmodel.VenueListViewModel
+import com.tala.assignment.viewmodel.CategoryListViewModel
 import android.arch.lifecycle.LiveData
 import com.tala.assignment.data.network.TalaNetworkService
 import com.tala.assignment.data.network.model.DataWrapper
@@ -12,7 +12,7 @@ import com.tala.assignment.data.network.model.VenueListModel
 @Singleton
 class VenueRepository {
 
-    private lateinit var mObservableVenueList: MediatorLiveData<DataWrapper<VenueListViewModel>>
+    private lateinit var mObservableVenueList: MediatorLiveData<DataWrapper<CategoryListViewModel>>
 
     private object HOLDER { val INSTANCE = VenueRepository()}
 
@@ -23,7 +23,7 @@ class VenueRepository {
     /**
      * Get the list of venues from the server and get notified when the data changes.
      */
-    fun getVenues(): LiveData<DataWrapper<VenueListViewModel>> {
+    fun getVenues(): LiveData<DataWrapper<CategoryListViewModel>> {
         return mObservableVenueList
     }
 

@@ -51,9 +51,9 @@ class VenueListAdapter(private val venues: List<VenueListModel.VenueRow>,
             if (data.categories.size > 0) {
                 val imageUrlBase = data.categories[0].icon
                 imageUrl = "${imageUrlBase.prefix}88${imageUrlBase.suffix}"
+                picasso.load(imageUrl).into(logo)
             }
 
-            picasso.load(imageUrl).into(logo)
             name.text = data.name
 
             parent.setOnClickListener {

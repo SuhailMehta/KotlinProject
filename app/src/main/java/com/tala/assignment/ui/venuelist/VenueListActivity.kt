@@ -1,11 +1,11 @@
-package com.tala.assignment.ui.main
+package com.tala.assignment.ui.venuelist
 
-import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import com.tala.assignment.R
 import com.tala.assignment.data.network.model.VenueListModel
+import com.tala.assignment.ui.main.IActivityCommunication
 import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector

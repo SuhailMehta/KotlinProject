@@ -17,7 +17,7 @@ import com.tala.assignment.data.network.model.DataWrapper
 import com.tala.assignment.data.network.model.VenueListModel
 import com.tala.assignment.repository.VenueRepository
 import com.tala.assignment.ui.adapter.VenueListAdapter
-import com.tala.assignment.viewmodel.VenueListViewModel
+import com.tala.assignment.viewmodel.CategoryListViewModel
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_main.*
 import javax.inject.Inject
@@ -26,12 +26,7 @@ import javax.inject.Inject
 /**
  * A placeholder fragment containing a list of venues in grid layout.
  */
-class VenueListFragment : Fragment() {
-
-    companion object {
-        fun title() = "TITLE"
-        fun id() = "ID"
-    }
+class CategoryListFragment : Fragment() {
 
     @Inject
     lateinit var talaNetworkService: TalaNetworkService
@@ -47,6 +42,11 @@ class VenueListFragment : Fragment() {
 
         super.onAttach(context)
 
+        if(context is IActivityCommunication){
+            context.setTitle("Categories")
+        }else{
+            throw ClassCastException(activity.toString()+" must implement IActivityCommunication")
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -59,19 +59,7 @@ class VenueListFragment : Fragment() {
     override fun onActivityCreated(@Nullable savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val args: Bundle? = arguments
-        val title: String? = args?.getString(title())
-        val id: String? = args?.getString(id())
-
-        if (context is IActivityCommunication) {
-            if (title != null) {
-                (context as IActivityCommunication).setTitle(title)
-            }
-        } else {
-            throw ClassCastException(activity.toString() + " must implement IActivityCommunication")
-        }
-
-        val viewModel = ViewModelProviders.of(this).get(VenueListViewModel()::class.java)
+        val viewModel = ViewModelProviders.of(this).get(CategoryListViewModel()::class.java)
 
         subscribeUi(viewModel)
     }
@@ -84,7 +72,7 @@ class VenueListFragment : Fragment() {
         autoFitRecycleView.setHasFixedSize(true)
     }
 
-    private fun subscribeUi(viewModel: VenueListViewModel) {
+    private fun subscribeUi(viewModel: CategoryListViewModel) {
         viewModel.getVenues(VenueRepository.instance, talaNetworkService)!!.observe(this, Observer<DataWrapper<VenueListModel.Response>> {
             if (null != it?.data) {
 
@@ -94,7 +82,7 @@ class VenueListFragment : Fragment() {
                     venueListAdapter = VenueListAdapter(
                             venueListModel.response.venues,
                             picasso,
-                            object : VenueListAdapter.OnItemClickListener {
+                            object: VenueListAdapter.OnItemClickListener{
                                 override fun onItemClick(item: VenueListModel.VenueRow) {
 
                                     (context as IActivityCommunication).onClick(item)

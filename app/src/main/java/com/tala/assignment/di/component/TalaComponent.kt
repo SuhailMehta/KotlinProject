@@ -3,13 +3,13 @@ package com.tala.assignment.di.component
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.squareup.picasso.Picasso
 import com.tala.assignment.ui.main.MainActivity
-import com.tala.assignment.ui.main.MainActivityFragment
+import com.tala.assignment.ui.main.CategoryListFragment
 import com.tala.assignment.TalaApplication
 import com.tala.assignment.di.interfaces.TalaApplicationScope
 import com.tala.assignment.di.module.*
 import com.tala.assignment.data.network.TalaNetworkService
-import com.tala.assignment.ui.main.VenueListActivity
-import com.tala.assignment.ui.main.VenueListFragment
+import com.tala.assignment.ui.venuelist.VenueListActivity
+import com.tala.assignment.ui.venuelist.VenueListFragment
 import dagger.Component
 import dagger.Subcomponent
 import dagger.android.AndroidInjector
@@ -38,9 +38,9 @@ interface MainActivitySubComponent: AndroidInjector<MainActivity> {
 }
 
 @Subcomponent
-interface MainActivityFragmentSubComponent: AndroidInjector<MainActivityFragment> {
+interface MainActivityFragmentSubComponent: AndroidInjector<CategoryListFragment> {
     @Subcomponent.Builder
-    abstract class Builder: AndroidInjector.Builder<MainActivityFragment>()
+    abstract class Builder: AndroidInjector.Builder<CategoryListFragment>()
 }
 
 @Subcomponent

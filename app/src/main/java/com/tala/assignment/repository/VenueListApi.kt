@@ -6,9 +6,7 @@ import com.tala.assignment.data.network.TalaNetworkService
 import com.tala.assignment.data.network.model.DataWrapper
 import com.tala.assignment.data.network.model.VenueListModel
 import com.tala.assignment.utils.Constants
-import com.tala.assignment.viewmodel.VenueListViewModel
 import retrofit2.Call
-import javax.inject.Inject
 
 class VenueListApi(val latlong : String, val talaNetworkService: TalaNetworkService): BaseRequestHandler<VenueListModel.Response>() {
 
