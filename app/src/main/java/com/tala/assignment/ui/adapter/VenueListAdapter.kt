@@ -1,5 +1,6 @@
 package com.tala.assignment.ui.adapter
 
+import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,10 @@ import com.squareup.picasso.Picasso
 import com.tala.assignment.R
 import com.tala.assignment.data.network.model.CategoryModel
 import com.tala.assignment.data.network.model.VenueListModel
+import android.support.v4.content.ContextCompat.startActivity
+import android.content.Intent
+import android.net.Uri
+
 
 class VenueListAdapter<T>(private var venues: List<T>,
                           private val picasso: Picasso, private val listener: OnItemClickListener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -21,7 +26,10 @@ class VenueListAdapter<T>(private var venues: List<T>,
         private const val PROGRESS_TYPE: Int = 1001
         private const val DATA_TYPE: Int = 1002
         private const val IMAGE_DIMENTIONS: Int = 88 // Four square Api specific
+        private const val MAP_URL: String = "http://maps.google.com/maps?q=loc:"
     }
+
+    private lateinit var context: Context
 
     fun setData(venues: List<T>) {
         this.venues = venues
@@ -50,6 +58,17 @@ class VenueListAdapter<T>(private var venues: List<T>,
                 holder.parent.setOnClickListener {
                     listener.onItemClick(data)
                 }
+
+                if(data.location?.lng != null && data.location?.lng != "") {
+                    holder.viewOnMap.visibility = View.VISIBLE
+                    holder.viewOnMap.setOnClickListener {
+                        val geoUri = "$MAP_URL${data.location?.lat},${data.location?.lng}"
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(geoUri))
+                        context.startActivity(intent)
+                    }
+                }else
+                    holder.viewOnMap.visibility = View.GONE
+
             } else if (data is CategoryModel.Category) {
 
                 val imageUrlBase = data.icon
@@ -78,13 +97,14 @@ class VenueListAdapter<T>(private var venues: List<T>,
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
+        context = parent.context
         if (viewType == PROGRESS_TYPE) {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.progress, parent, false)
+            val view = LayoutInflater.from(context).inflate(R.layout.progress, parent, false)
 
             return ViewHolderProgressBar(view)
         }
 
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.venue_list_row, parent, false)
+        val view = LayoutInflater.from(context).inflate(R.layout.venue_list_row, parent, false)
 
         return ViewHolder(view)
 
@@ -110,12 +130,14 @@ class VenueListAdapter<T>(private var venues: List<T>,
         val logo: ImageView
         val name: TextView
         val parent: View
+        val viewOnMap: TextView
 
         constructor(itemView: View) : super(itemView) {
 
             logo = itemView.findViewById(R.id.logo) as ImageView
             name = itemView.findViewById(R.id.name) as TextView
             parent = itemView.findViewById(R.id.venue_row_parent)
+            viewOnMap = itemView.findViewById(R.id.mapView) as TextView
 
         }
 
